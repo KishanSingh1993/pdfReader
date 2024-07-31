@@ -57,19 +57,6 @@ class PdfBloc extends Bloc<PdfEvent, PdfState> {
     final date = dateMatch?.group(1) ?? 'N/A';
 
     // Extract transactions
-    // final transactionsRegExp = RegExp(r'(\d{1,2} \w+ \d{4})\s+([\w\s]+)\s+(\$\d+\.\d{2})\s+(\$\d+\.\d{2})\s+(\$\d+\.\d{2} \w+)', caseSensitive: false);
-    // final transactionsMatches = transactionsRegExp.allMatches(text);
-    // final transactions = transactionsMatches.map((match) {
-    //   return {
-    //     "date": match.group(1) ?? 'N/A',
-    //     "description": match.group(2) ?? 'N/A',
-    //     "debit": match.group(3) ?? 'N/A',
-    //     "credit": match.group(4) ?? 'N/A',
-    //     "balance": match.group(5) ?? 'N/A',
-    //   };
-    // }).toList();
-
-    // Extract transactions
     extractTransactions(text);
 
     // Print transactions for debugging
@@ -109,7 +96,7 @@ class PdfBloc extends Bloc<PdfEvent, PdfState> {
   void extractTransactions(String text) {
     // Define the regex pattern for transactions
     final transactionsRegExp = RegExp(
-      r'(\d{1,2} \w+ \d{4})\s+(.+?)\s+(\$\d+\.\d{2})?\s*(\$\d+\.\d{2})?\s*(\$\d+\.\d{2}\s*\w+)',
+      r'(\d{1,2} \w+ \d{4})\s+(.+?)\s+(\$\d+\.\d{2})?\s*(CR)?\s*(\$\d+\.\d{2} CR?)?',
       caseSensitive: false,
       multiLine: true,
     );
@@ -126,14 +113,13 @@ class PdfBloc extends Bloc<PdfEvent, PdfState> {
     // Extract transactions
     transactions = transactionsMatches.map((match) {
       return {
-        "date": match.group(1) ?? 'N/A',
-        "description": match.group(2) ?? 'N/A',
-        "debit": match.group(3) ?? 'N/A',
-        "credit": match.group(4) ?? 'N/A',
-        "balance": match.group(5) ?? 'N/A',
+        "date": match.group(1) ?? '',
+        "description": match.group(2) ?? '',
+        "debit": (match.group(3) != null && match.group(4) == null) ? match.group(3)! : '',
+        "credit": (match.group(3) != null && match.group(4) != null) ? match.group(3)! : '',
+        "balance": match.group(5) ?? '',
       };
     }).toList();
   }
-
 
 }
