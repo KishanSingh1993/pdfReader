@@ -42,11 +42,7 @@ class PdfBloc extends Bloc<PdfEvent, PdfState> {
     print('Statement Period: $statementPeriod');
 
     // Extract closing balance
-    // Example text
     const text1 = 'Closing Balance \$401.22 CR';
-    // Print input text
-    print('Input Text: $text1');
-    // Extract closing balance
     extractClosingBalance(text1);
     // Print closing balance
     print('Closing Balance: $closingBalance');
@@ -60,9 +56,9 @@ class PdfBloc extends Bloc<PdfEvent, PdfState> {
     extractTransactions(text);
 
     // Print transactions for debugging
-    transactions.forEach((transaction) {
+    for (var transaction in transactions) {
       print(transaction);
-    });
+    }
 
     return {
       "accountNumber": accountNumber,
@@ -91,8 +87,9 @@ class PdfBloc extends Bloc<PdfEvent, PdfState> {
       closingBalance = 'N/A';
     }
   }
-
+  
   // Function to extract transactions from the text
+
   void extractTransactions(String text) {
     // Define the regex pattern for transactions
     final transactionsRegExp = RegExp(
