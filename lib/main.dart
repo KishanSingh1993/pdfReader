@@ -5,25 +5,30 @@ import 'package:pdf_reader_app/bloc/pdf_bloc.dart';
 import 'package:pdf_reader_app/bloc/pdf_event.dart';
 import 'package:pdf_reader_app/bloc/pdf_state.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
+import 'package:pdf_reader_app/model/transaction.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: BlocProvider(
         create: (context) => PdfBloc(),
-        child: PdfReaderScreen(),
+        child: const PdfReaderScreen(),
       ),
     );
   }
 }
 
 class PdfReaderScreen extends StatelessWidget {
+  const PdfReaderScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,9 +41,12 @@ class PdfReaderScreen extends StatelessWidget {
             return Center(
               child: ElevatedButton(
                 onPressed: () async {
-                  FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: ['pdf']);
+                  FilePickerResult? result = await FilePicker.platform
+                      .pickFiles(
+                      type: FileType.custom, allowedExtensions: ['pdf']);
                   if (result != null) {
-                    BlocProvider.of<PdfBloc>(context).add(UploadPdfEvent(result.files.single.path!));
+                    BlocProvider.of<PdfBloc>(context)
+                        .add(UploadPdfEvent(result.files.single.path!));
                   }
                 },
                 child: const Text('Upload PDF'),
@@ -66,11 +74,13 @@ class PdfReaderScreen extends StatelessWidget {
         Text('Statement Period: ${data["statementPeriod"]}'),
         Text('Closing Balance: ${data["closingBalance"]}'),
         const SizedBox(height: 20),
-        const Text('Transactions:', style: TextStyle(fontWeight: FontWeight.bold)),
-        ...data["transactions"].map<Widget>((transaction) {
+        const Text('Transactions:',
+            style: TextStyle(fontWeight: FontWeight.bold)),
+        ...(data['transactions'] as List<Transaction>).map((trans) {
           return ListTile(
-            title: Text(transaction["description"]),
-            subtitle: Text('Date: ${transaction["date"]}, Debit: ${transaction["debit"]}, Credit: ${transaction["credit"]}, Balance: ${transaction["balance"]}'),
+            title: Text(trans.description),
+            subtitle: Text(
+                'Date: ${trans.date}, Debit: ${trans.debitOrCredit}, Credit: ${trans.debitOrCredit}, Balance: ${trans.balance}'),
           );
         }).toList(),
         const SizedBox(height: 20),
